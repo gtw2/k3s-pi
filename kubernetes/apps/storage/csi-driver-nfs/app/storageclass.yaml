@@ -1,0 +1,60 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: "media-compressed"
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: "192.168.1.67"
+  share: "/mnt/sega/PlexNAS/Compressed"
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+mountOptions: ["hard", "noatime"]
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: "media-uncompressed"
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: "192.168.1.67"
+  share: "/mnt/sega/PlexNAS/Uncompressed"
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+mountOptions: ["hard", "noatime"]
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: "kube-nfs"
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: "192.168.1.67"
+  share: "/mnt/sony/kubernetes"
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+mountOptions: ["hard", "noatime"]
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: "media-dvr"
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: "192.168.1.67"
+  share: "/mnt/sega/PlexNAS/DVR"
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+mountOptions: ["hard", "noatime"]
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: "media-misc"
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: "192.168.1.67"
+  share: "/mnt/sega/PlexNAS/MiscMedia"
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+mountOptions: ["hard", "noatime"]

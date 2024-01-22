@@ -1,0 +1,14 @@
+---
+kubernetes:
+  children:
+    master:
+      hosts:
+        "rpi-node1":
+          ansible_user: "greg"
+          ansible_host: "10.10.30.11"
+        "rpi-node2":
+          ansible_user: "greg"
+          ansible_host: "10.10.30.12"
+        "rpi-node3":
+          ansible_user: "greg"
+          ansible_host: "10.10.30.13"

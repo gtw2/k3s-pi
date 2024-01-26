@@ -118,7 +118,7 @@ spec:
           gethomepage.dev/name: Prometheus
           gethomepage.dev/group: Observability
           gethomepage.dev/widget.type: prometheus
-          gethomepage.dev/widget.url: http://prometheus.observability
+          gethomepage.dev/widget.url: "http://prometheus.${SECRET_DOMAIN}"
         pathType: Prefix
         hosts:
           - "prometheus.${SECRET_DOMAIN}"

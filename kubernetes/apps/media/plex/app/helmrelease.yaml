@@ -1,0 +1,127 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: plex
+  namespace: media
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 2.5.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  maxHistory: 3
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      main:
+        type: statefulset
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: 10Gi
+              storageClass: longhorn
+              globalMounts:
+                - path: /config
+        containers:
+          main:
+            annotations:
+              reloader.stakater.com/auto: "true"
+            image:
+              repository: ghcr.io/onedr0p/plex
+              tag: 1.32.8.7639-fb6452ebf@sha256:637fe10cef736f249d96cb004c12f81646c81ca17ddce22374ea8782aa6646c2
+            env:
+              TZ: "${TIMEZONE}"
+              ADVERTISE_IP: "https://{{ .Release.Name }}.${SECRET_DOMAIN}"
+            envFrom:
+              - secretRef:
+                  name: plex-secret
+            # securityContext:
+            #   allowPrivilegeEscalation: false
+            #   readOnlyRootFilesystem: true
+            #   capabilities: { drop: ["ALL"] }
+            # resources:
+            #   requests:
+            #     gpu.intel.com/i915: 1
+            #     cpu: 200m
+            #     memory: 2Gi
+            #   limits:
+            #     gpu.intel.com/i915: 1
+            #     memory: 16Gi
+        pod:
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: app.kubernetes.io/name
+                        operator: In
+                        values: ["frigate"]
+                  topologyKey: kubernetes.io/hostname
+          nodeSelector:
+            intel.feature.node.kubernetes.io/gpu: "true"
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            supplementalGroups: [105]
+              # - 44
+              # - 105
+              # - 10000
+    service:
+      main:
+        ports:
+          http:
+            port: 32400
+    ingress:
+      main:
+        enabled: true
+        className: external-bypass
+        annotations:
+          external-dns.alpha.kubernetes.io/target: external-bypass.${SECRET_DOMAIN}
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+          cert-manager.io/cluster-issuer: letsencrypt-production
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/icon: plex.png
+          gethomepage.dev/name: Plex
+          gethomepage.dev/group: Media
+          gethomepage.dev/widget.type: plex
+          gethomepage.dev/widget.url: http://plex.media:32400
+          # gethomepage.dev/widget.key: '{{HOMEPAGE_VAR_PLEX_KEY}}'
+        hosts:
+          - host: &host "{{ .Release.Name }}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  name: main
+                  ports: http
+        tls:
+          - hosts:
+              - *host
+    persistence:
+      media:
+        enabled: true
+        type: nfs
+        server: "${SECRET_NFS_SERVER}"
+        path: "${SECRET_NFS_MEDIA}"
+        mountPath: /media
+        readOnly: true
+      transcode:
+        enabled: true
+        type: emptyDir

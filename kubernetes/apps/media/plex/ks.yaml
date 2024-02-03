@@ -24,5 +24,3 @@ spec:
   postBuild:
     substitute:
       APP: plex
-      GATUS_SUBDOMAIN: plex
-      GATUS_URL_PATH: /web/index.html

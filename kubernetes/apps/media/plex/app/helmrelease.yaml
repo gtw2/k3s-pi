@@ -43,6 +43,7 @@ spec:
             env:
               TZ: "${TIMEZONE}"
               ADVERTISE_IP: "https://{{ .Release.Name }}.${SECRET_DOMAIN}"
+              HOSTNAME: "Quasar"
             envFrom:
               - secretRef:
                   name: plex-secret

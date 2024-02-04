@@ -23,13 +23,13 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
-  # dependsOn:
+  dependsOn:
   #   - name: intel-device-plugin-gpu
   #     namespace: tools
   #   - name: rook-ceph-cluster
   #     namespace: rook-ceph
-  #   - name: volsync
-  #     namespace: storage
+    - name: volsync
+      namespace: storage
   values:
     controllers:
       main:
@@ -126,6 +126,9 @@ spec:
           - hosts:
               - *host
     persistence:
+      config:
+        enabled: true
+        existingClaim: plex
       media:
         enabled: true
         type: nfs

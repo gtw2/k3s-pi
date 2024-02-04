@@ -24,3 +24,4 @@ spec:
   postBuild:
     substitute:
       APP: plex
+      VOLSYNC_CAPACITY: 20Gi

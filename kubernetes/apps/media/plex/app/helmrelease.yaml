@@ -38,8 +38,8 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/onedr0p/plex-beta
-              tag: 1.40.0.7775-456fbaf97@sha256:cd6bafd8cf9f75c2d5b6517de312a82a986049f89f089da74b6bdb23928b8b37
+              repository: ghcr.io/lildrunkensmurf/plex
+              tag: 1.32.8.7639-fb6452ebf@sha256:6fa99098445585b0cb69f2603d32bbe83a74d16c7cedbabf99a0bd1c9d0973c6
             env:
               TZ: "${TIMEZONE}"
               ADVERTISE_IP: "https://{{ .Release.Name }}.${SECRET_DOMAIN}:443,http://10.10.30.101:32400"

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: kube-nfs
+  resources:
+    requests:
+      storage: 20Gi
